@@ -11,7 +11,10 @@ Author URI: http://eleanorsoft.com/
 define("POST_TYPE_ERST_DISCOUNT", 'erst_discount');
 
 /**
- * Register new title
+ * Register	new title
+ *
+ * @param	string $title
+ * @return	string $title
  */
 function erst_discount_title( $title ) {
     if ( POST_TYPE_ERST_DISCOUNT === get_post_type() ) {
@@ -26,7 +29,7 @@ add_filter( 'enter_title_here', 'erst_discount_title' );
 /**
  * Register new admin notices
  */
-function admin_error_notice() {settings_errors();
+function admin_error_notice() {
     $errors = get_transient( 'error' );
 
     if ( !$errors ) {
@@ -47,6 +50,10 @@ add_action( 'admin_notices', 'admin_error_notice' );
 
 /**
  * Discount unique 'number' validation
+ *
+ * @param	array $data
+ * @param	array $post_arr
+ * @return	array $data
  */
 function filter_post_data( $data , $post_arr ) {
     $founded_post = get_page_by_title( $data['post_title'], OBJECT, POST_TYPE_ERST_DISCOUNT );
@@ -131,9 +138,9 @@ function meta_erst_discount()
 /**
  * Save custom meta for discount
  *
- * @param integer $post_id
- * @param WP_Post $post
- * @return mixed
+ * @param	integer $post_id
+ * @param	WP_Post $post
+ * @return	integer $post_id
  */
 function erst_discount_meta_save( $post_id, $post ) {
     /* Verify the nonce before proceeding. */
@@ -181,21 +188,24 @@ add_action( 'save_post', 'erst_discount_meta_save', 10, 2 );
 
 /**
  * Get discount size
- * @param $post
- * @return string
+ *
+ * @param	WP_Post $post
+ * @return	mixed
  */
 function get_erst_discount_size( $post )
 {
     if (is_object($post)) {
         $post = $post->ID;
     }
+
     return get_post_meta( $post, 'erst_discount_size', true );
 }
 
 /**
  * Get discount holder's full name
- * @param $post
- * @return string
+ *
+ * @param	WP_Post $post
+ * @return	mixed
  */
 function get_erst_discount_full_name( $post )
 {
@@ -207,8 +217,7 @@ function get_erst_discount_full_name( $post )
 }
 
 /**
- * Returns discounts in json format for ajax
- * @return json
+ * Return discounts in json format for ajax
  */
 function api_discount() {
     global $wpdb;
@@ -240,8 +249,10 @@ function api_discount() {
 add_action( 'wp_ajax_discount', 'api_discount' );
 
 /**
- * Return discount by number
- * @return object
+ * Return discount meta by number
+ *
+ * @param	integer $number
+ * @return	mixed
  */
 function get_discount_by_number($number) {
     return get_post_meta(
