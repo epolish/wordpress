@@ -251,7 +251,7 @@ add_action( 'wp_ajax_discount', 'api_discount' );
 /**
  * Return discount meta by number
  *
- * @param	integer $number
+ * @param	string $number
  * @return	mixed
  */
 function get_discount_by_number($number) {
