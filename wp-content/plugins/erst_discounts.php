@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Discounts
+Plugin Name: Discounts for Studioschastie.com
 Plugin URI: https://studioschastie.com.ua/
 Description: Adds admin section for managing discounts
 Version: 1.0
-Author: Eleanorsoft Inc
-Author URI: http://eleanorsoft.com/
+Author: NUCLEO Inc
+Author URI: http://design.nucleo.com.ua/
 */
 
 define("POST_TYPE_ERST_DISCOUNT", 'erst_discount');
@@ -118,7 +118,7 @@ function meta_erst_discount()
             ?>
             <p>
                 <label for="erst_discount_size"><?= __( 'Размер скидки (%)' ) ?></label>
-                <input class="widefat" type="number" step="0.01" name="erst_discount_size" id="erst_discount_size"
+                <input class="widefat" type="number" max="100" min="0" step="0.01" name="erst_discount_size" id="erst_discount_size"
                        value="<?php print esc_attr( $size ); ?>" />
             </p>
             <p>
@@ -158,24 +158,21 @@ function erst_discount_meta_save( $post_id, $post ) {
         'erst_discount_size',
         'erst_discount_full_name',
     );
+
     foreach ($fields as $field) {
         /* Get the posted data and sanitize it for use as an HTML class. */
         $new_meta_value = ( isset( $_POST[$field] ) ? $_POST[$field] : '' );
-
         /* Get the meta key. */
         $meta_key = $field;
-
         /* Get the meta value of the custom field key. */
         $meta_value = get_post_meta( $post_id, $meta_key, true );
 
         /* If a new meta value was added and there was no previous value, add it. */
         if ( $new_meta_value && '' == $meta_value )
             add_post_meta( $post_id, $meta_key, $new_meta_value, true );
-
         /* If the new meta value does not match the old value, update it. */
         elseif ( $new_meta_value && $new_meta_value != $meta_value )
             update_post_meta( $post_id, $meta_key, $new_meta_value );
-
         /* If there is no new meta value but an old value exists, delete it. */
         elseif ( '' == $new_meta_value && $meta_value )
             delete_post_meta( $post_id, $meta_key, $meta_value );
@@ -230,10 +227,8 @@ function api_discount() {
 
     if ( $post_id ) {
         $post = get_post( $post_id );
-
         if ( $post && $post->post_type == POST_TYPE_ERST_DISCOUNT ) {
             $discount_size = get_post_meta( $post_id )['erst_discount_size'][0];
-
             if ($discount_size) {
                 $response['status'] = 200;
                 $response['message'] = __( 'Success' );
@@ -246,7 +241,7 @@ function api_discount() {
     wp_die();
 }
 
-add_action( 'wp_ajax_discount', 'api_discount' );
+add_action( 'wp_ajax_nopriv_discount', 'api_discount' );
 
 /**
  * Return discount meta by number
